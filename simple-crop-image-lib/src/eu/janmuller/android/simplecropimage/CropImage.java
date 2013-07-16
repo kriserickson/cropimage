@@ -17,6 +17,7 @@
 package eu.janmuller.android.simplecropimage;
 
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -41,48 +42,47 @@ public class CropImage extends MonitoredActivity {
 
     final int IMAGE_MAX_SIZE = 1024;
 
-    private static final String TAG                    = "CropImage";
-    public static final  String IMAGE_PATH             = "image-path";
-    public static final  String SCALE                  = "scale";
-    public static final  String ORIENTATION_IN_DEGREES = "orientation_in_degrees";
-    public static final  String ASPECT_X               = "aspectX";
-    public static final  String ASPECT_Y               = "aspectY";
-    public static final  String OUTPUT_X               = "outputX";
-    public static final  String OUTPUT_Y               = "outputY";
-    public static final  String SCALE_UP_IF_NEEDED     = "scaleUpIfNeeded";
-    public static final  String CIRCLE_CROP            = "circleCrop";
-    public static final  String RETURN_DATA            = "return-data";
-    public static final  String RETURN_DATA_AS_BITMAP  = "data";
-    public static final  String ACTION_INLINE_DATA     = "inline-data";
+    private static final String TAG = "CropImage";
+    public static final String IMAGE_PATH = "image-path";
+    public static final String SCALE = "scale";
+    public static final String ORIENTATION_IN_DEGREES = "orientation_in_degrees";
+    public static final String ASPECT_X = "aspectX";
+    public static final String ASPECT_Y = "aspectY";
+    public static final String OUTPUT_X = "outputX";
+    public static final String OUTPUT_Y = "outputY";
+    public static final String SCALE_UP_IF_NEEDED = "scaleUpIfNeeded";
+    public static final String CIRCLE_CROP = "circleCrop";
+    public static final String RETURN_DATA = "return-data";
+    public static final String RETURN_DATA_AS_BITMAP = "data";
+    public static final String ACTION_INLINE_DATA = "inline-data";
 
     // These are various options can be specified in the intent.
-    private       Bitmap.CompressFormat mOutputFormat    = Bitmap.CompressFormat.JPEG;
-    private       Uri                   mSaveUri         = null;
-    private       boolean               mDoFaceDetection = true;
-    private       boolean               mCircleCrop      = false;
-    private final Handler               mHandler         = new Handler();
+    private Bitmap.CompressFormat mOutputFormat = Bitmap.CompressFormat.JPEG;
+    private Uri mSaveUri = null;
+    private boolean mDoFaceDetection = true;
+    private boolean mCircleCrop = false;
+    private final Handler mHandler = new Handler();
 
-    private int             mAspectX;
-    private int             mAspectY;
-    private int             mOutputX;
-    private int             mOutputY;
-    private boolean         mScale;
-    private CropImageView   mImageView;
+    private int mAspectX;
+    private int mAspectY;
+    private int mOutputX;
+    private int mOutputY;
+    private boolean mScale;
+    private CropImageView mImageView;
     private ContentResolver mContentResolver;
-    private Bitmap          mBitmap;
-    private String          mImagePath;
+    private Bitmap mBitmap;
+    private String mImagePath;
 
-    boolean       mWaitingToPick; // Whether we are wait the user to pick a face.
-    boolean       mSaving;  // Whether the "save" button is already clicked.
+    boolean mWaitingToPick; // Whether we are wait the user to pick a face.
+    boolean mSaving;  // Whether the "save" button is already clicked.
     HighlightView mCrop;
 
-    // These options specifiy the output image size and whether we should
+    // These options specify the output image size and whether we should
     // scale the output to fit it (or just crop it).
     private boolean mScaleUp = true;
 
-    private final BitmapManager.ThreadSet mDecodingThreads =
-            new BitmapManager.ThreadSet();
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public void onCreate(Bundle icicle) {
 
@@ -100,11 +100,7 @@ public class CropImage extends MonitoredActivity {
         Bundle extras = intent.getExtras();
         if (extras != null) {
 
-            if (extras.getString(CIRCLE_CROP) != null) {
-
-        	if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
-            		mImageView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        	}
+            if (extras.getBoolean(CIRCLE_CROP, false)) {
 
                 mCircleCrop = true;
                 mAspectX = 1;
@@ -292,15 +288,11 @@ public class CropImage extends MonitoredActivity {
         // If we are circle cropping, we want alpha channel, which is the
         // third param here.
         Bitmap croppedImage;
-        try {
 
-            croppedImage = Bitmap.createBitmap(width, height,
-                    mCircleCrop ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565);
-        } catch (Exception e) {
-            throw e;
-        }
+        croppedImage = Bitmap.createBitmap(width, height,
+            mCircleCrop ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565);
+
         if (croppedImage == null) {
-
             return;
         }
 
@@ -428,12 +420,6 @@ public class CropImage extends MonitoredActivity {
         finish();
     }
 
-    @Override
-    protected void onPause() {
-
-        super.onPause();
-        BitmapManager.instance().cancelThreadDecoding(mDecodingThreads);
-    }
 
     @Override
     protected void onDestroy() {
@@ -598,7 +584,7 @@ public class CropImage extends MonitoredActivity {
         }
     };
 
-    public static final int NO_STORAGE_ERROR  = -1;
+    public static final int NO_STORAGE_ERROR = -1;
     public static final int CANNOT_STAT_ERROR = -2;
 
     public static void showStorageToast(Activity activity) {
