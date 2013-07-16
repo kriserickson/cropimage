@@ -5,25 +5,34 @@
               android:layout_height="fill_parent"
         >
 
-    <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="10dp">
-
-        <Button
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical">
+        <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/gallery"
-                android:text="From gallery"
-                android:layout_weight="0.5"/>
+                android:orientation="horizontal"
+                android:padding="10dp">
 
-        <Button
+            <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/gallery"
+                    android:text="From gallery"
+                    android:layout_weight="0.5"/>
+
+            <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/take_picture"
+                    android:text="Take picture"
+                    android:layout_weight="0.5"/>
+        </LinearLayout>
+        <CheckBox
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/take_picture"
-                android:text="Take picture"
-                android:layout_weight="0.5"/>
+                android:layout_height="match_parent"
+                android:text="Circle Crop"
+                android:id="@+id/circlCrop"/>
+
     </LinearLayout>
 
     <ImageView

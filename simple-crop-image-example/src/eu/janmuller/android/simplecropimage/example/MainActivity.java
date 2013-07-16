@@ -11,6 +11,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import eu.janmuller.android.simplecropimage.CropImage;
 
@@ -26,6 +27,7 @@ public class MainActivity extends Activity {
 
     private ImageView mImageView;
     private File      mFileTemp;
+    private CheckBox mCircleCrop;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +50,8 @@ public class MainActivity extends Activity {
                 takePicture();
             }
         });
+
+        mCircleCrop = (CheckBox)findViewById(R.id.circlCrop);
 
         mImageView = (ImageView) findViewById(R.id.image);
         mFileTemp = new File(Environment.getExternalStorageDirectory(), "temp_photo.jpg");
@@ -80,6 +84,9 @@ public class MainActivity extends Activity {
     private void startCropImage() {
 
         Intent intent = new Intent(this, CropImage.class);
+        if (mCircleCrop.isChecked()) {
+            intent.putExtra(CropImage.CIRCLE_CROP, true);
+        }
         intent.putExtra(CropImage.IMAGE_PATH, mFileTemp.getPath());
         intent.putExtra(CropImage.SCALE, true);
 
